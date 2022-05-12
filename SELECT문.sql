@@ -248,12 +248,95 @@ ORDER BY department_id ASC,
          salary DESC;
   
          
---////단일행 함수//////////////////////////////////////
+-- ////단일행 함수//////////////////////////////////////
 
---////문자함수 INITCPA(컬럼형) >> 첫글자만 대문자, 뒤에는 소문자
+-- ////문자함수 INITCPA(컬럼명) >> 첫글자만 대문자, 뒤에는 소문자
 -- 부서번호 100인 직원의 이메일주솧와 부서번호를 출력하세요
 SELECT email
        ,INITCAP(email) ID
        ,department_id
 FROM employees
 WHERE department_id = 100;
+
+
+-- ////문자함수 LOWER/UPPER(컬럼명)////////////////////////////
+SELECT first_name ORIGINAL
+       ,LOWER(first_name) LOWER
+       ,UPPER(first_name) UPPER
+FROM employees
+WHERE department_id = 100;
+
+
+-- ////문자함수 SUBSTRING(컬럼명, 시작위치, 글자수)///////////////////
+SELECT first_name
+       ,SUBSTR(first_name, 1, 3)
+       ,SUBSTR(first_name, -3, 2)
+FROM employees
+WHERE department_id = 100;
+
+
+-- ////문자함수 LPAD/RPAD(컬럼명, 자리수, 채울문자)///////////
+SELECT first_name
+       ,RPAD(first_name, 10, '*')
+       ,LPAD(first_name, 10, ' ')
+FROM employees
+WHERE department_id = 100;
+
+
+-- ////문자함수 REPLACE(컬럼명, 문자1, 문자2)//////////////////////////
+SELECT first_name
+       ,REPLACE(first_name, 'a', '*')
+       ,REPLACE(first_name, SUBSTR(first_name, 2, 3), '***')
+FROM employees
+WHERE department_id = 100;
+
+
+-- ////TEST용/////////////////////////////////////////////
+-- 가상 테이블 dual을 사용함
+SELECT REPLACE('abcdefg', 'bc', '**')
+FROM dual;
+
+SELECT SUBSTR('900214-1234234', 8, 1)
+FROM dual;
+
+
+-- ////숫자함수 ROUND(숫자, 출력을 원하는 자리수)/////////////
+SELECT ROUND(123.346, 2) "r2"
+       ,ROUND(123.456, 0) "r0"
+       ,ROUND(123.456, -1) "r-1"
+FROM dual;
+
+-- ////숫자함수 TRUNC(숫자, 출력을 원하는 자리수)/////////////
+SELECT TRUNC(123.346, 2) "r2"
+       ,TRUNC(123.456, 0) "r0"
+       ,TRUNC(123.456, -1) "r-1"
+FROM dual;
+
+
+-- ////날짜함수 SYSDATE()//////////////////
+SELECT SYSDATE
+FROM dual;
+
+
+-- ////날짜함수 MONTHS_BETWEEN//////////////////
+SELECT MONTHS_BETWEEN('22/08/12', '22/05/11')
+FROM dual;
+
+SELECT first_name 이름
+       ,TRUNC(MONTHS_BETWEEN(SYSDATE, hire_date)/12, 0) || '년' 근속년수
+FROM employees;
+
+
+-- ////TO_CHAR(숫자, '출력모양') 숫자형 -> 문자형 ///////////////////////
+SELECT first_name
+       ,TO_CHAR(salary*12, '$999,999,999')
+FROM employees
+WHERE department_id = 110;
+
+SELECT sysdate
+       ,TO_CHAR(sysdate, 'YYYY"년" MM"월" DD"일" HH24"시" MI"분" SS"초"')
+FROM dual;
+
+SELECT sysdate
+       ,TO_CHAR(sysdate, 'YYYY-MM-DD HH24:MI:SS')
+FROM dual;
