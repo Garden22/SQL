@@ -72,11 +72,11 @@ SELECT e.employee_id 직원번호
        ,e.salary 급여
        ,e.department_id 부서번호
 FROM employees e, (SELECT department_id
-                          ,MAX(salary) money
+                          ,MAX(salary) salary
                    FROM employees
                    GROUP BY department_id) s
 WHERE e.department_id = s.department_id
-AND e.salary = s.money
+AND e.salary = s.salary
 ORDER BY e.salary DESC;
 
 
@@ -99,8 +99,8 @@ SELECT e.employee_id 직원번호
        ,e.first_name 이름
        ,e.salary 급여
 FROM employees e, (SELECT department_id,
-                   AVG(salary) money
+                   AVG(salary) salary
                    FROM employees
                    GROUP BY department_id) avg
 WHERE e.department_id = avg.department_id
-AND e.salary > avg.money;
+AND e.salary > avg.salary;
