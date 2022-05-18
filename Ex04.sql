@@ -114,3 +114,32 @@ FROM employees e, (SELECT department_id, MAX(salary) salary
 WHERE e.department_id = s.department_id
 AND e.salary = s.salary;
 
+
+-- 급여를 가장 많이 받은 5명의 직원의 월급을 출력
+SELECT ROWNUM
+       ,employee_id
+       ,first_name
+       ,salary
+FROM (SELECT employee_id
+             ,first_name
+             ,salary
+      FROM employees
+      ORDER BY salary DESC)
+WHERE ROWNUM <= 5;
+
+
+-- 07년에 입사한 직원 중 급여가 많은 직원 중 3에서 7등의 이름, 급여, 입사일은?
+SELECT ref.rn
+       ,ref.first_name
+       ,ref.salary
+       ,ref.hire_date
+FROM (SELECT ROWNUM rn             
+             ,first_name
+             ,salary
+             ,hire_date
+      FROM employees
+      WHERE hire_date >= '07/01/01'
+      AND hire_date <= '07/12/31'
+      ORDER BY salary DESC) ref
+WHERE ref.rn >= 3 
+AND ref.rn <= 7;
