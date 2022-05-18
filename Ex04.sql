@@ -129,8 +129,7 @@ WHERE ROWNUM <= 5;
 
 
 -- 07년에 입사한 직원 중 급여가 많은 직원 중 3에서 7등의 이름, 급여, 입사일은?
-SELECT ref.rn
-       ,ref.first_name
+SELECT ref.first_name
        ,ref.salary
        ,ref.hire_date
 FROM (SELECT ROWNUM rn             
