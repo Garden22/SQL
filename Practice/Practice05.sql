@@ -103,6 +103,7 @@ AND e.rn <= 20;
 SELECT e.first_name || ' ' || last_name 이름
        ,e.salary 연봉
        ,d.department_name 부서명
+       ,e.hire_date 입사일
 FROM employees e, departments d
 WHERE hire_date = (SELECT MAX(hire_date)
                    FROM employees)
@@ -113,8 +114,9 @@ AND e.department_id = d.department_id;
 -- 평균연봉이 가장 높은 부서 직원들의 직원번호, 이름, 성과 업무, 연봉을 조회하시오
 SELECT e.employee_id 직원번호
        ,e.first_name 이름
+       ,e.last_name 성
        ,j.job_title 성과업무
-       ,ref.평균급여
+       ,ref.평균급여 "부서 평균급여"
        ,e.salary 급여
 FROM employees e, jobs j, (SELECT department_id
                                   ,평균급여
@@ -130,7 +132,8 @@ FROM employees e, jobs j, (SELECT department_id
                                  WHERE ROWNUM = 1)
                             ) ref
 WHERE e.job_id = j.job_id
-AND e.department_id = ref.department_id;
+AND e.department_id = ref.department_id
+ORDER BY e.employee_id ASC;
 
 
 -- 문제8
