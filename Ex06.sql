@@ -80,8 +80,36 @@ DELETE FROM author
 -- 테이블의 모든 ROW 제거
 TRUNCATE TABLE article;
 
-SELECT *
-FROM book;
+
+-- 작가 시퀀스 만들기
+CREATE SEQUENCE seq_author_id
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+INSERT INTO author VALUES(seq_author_id.NEXTVAL, '박경리', '토지 작가');
+INSERT INTO author VALUES(seq_author_id.NEXTVAL, '이문열', '삼국지 작가');
+INSERT INTO author VALUES(seq_author_id.NEXTVAL, '기안84', '웹툰 작가');
+INSERT INTO author VALUES(seq_author_id.NEXTVAL, '황일영', 'JAVA');
+INSERT INTO author VALUES(seq_author_id.NEXTVAL, '황일영2', 'JAVA2');
+
+SELECT * 
+FROM user_sequences;
+
+SELECT seq_author_id.CURRVAL
+FROM DUAL;
+
+SELECT seq_author_id.NEXTVAL
+FROM DUAL;
+
+DROP SEQUENCE seq_author_id;
+
+ROLLBACK; -- DML만 가능
+COMMIT;
+--------------------------
 
 SELECT * 
 FROM author;
+
+SELECT *
+FROM book;
