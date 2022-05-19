@@ -23,7 +23,65 @@ RENAME book TO article;
 
 -- 테이블 삭제
 DROP TABLE article;
+DROP TABLE author;
+DROP TABLE book;
 
+CREATE TABLE author (
+    author_id NUMBER(10),
+    author_name VARCHAR(100) NOT NULL,
+    author_desc VARCHAR2(500),
+    PRIMARY KEY (author_id)
+);
+
+
+-- 행 삽입
+INSERT INTO author VALUES(1, '박경리', '토지 작가');
+
+INSERT INTO author (author_id, author_name)
+VALUES(2, '이문열');
+
+INSERT INTO author (author_name, author_id) 
+VALUES('기안84', 3);
+
+
+CREATE TABLE book (
+    book_id NUMBER(10),
+    title VARCHAR2(100) NOT NULL,
+    pubs VARCHAR2(100),
+    pub_date DATE,
+    author_id NUMBER(10),
+    PRIMARY KEY(book_id),
+    CONSTRAINT book_fk FOREIGN KEY (author_id)
+    REFERENCES author(author_id)
+);
+
+INSERT INTO book
+VALUES(1, '토지', '마로니에북스', '2012-08-15', 1);
+
+INSERT INTO book
+VALUES(2, '삼국지', '민음사', '2002/03/01', 2);
+
+UPDATE author
+SET author_desc = '삼국지 작가'
+WHERE author_id = 2;
+
+UPDATE author
+SET author_desc = '토지 작가'
+    ,author_name = '김경리'
+WHERE author_id = 1;
+
+-- 조건 만족하는 레코드 삭제
+DELETE FROM author
+WHERE authoor_id = 1;
+
+-- 조건이 없으면 모든 데이터 삭제
+DELETE FROM author
+
+-- 테이블의 모든 ROW 제거
+TRUNCATE TABLE article;
 
 SELECT *
 FROM book;
+
+SELECT * 
+FROM author;
