@@ -116,74 +116,61 @@ SELECT e.employee_id 직원번호
        ,e.first_name 이름
        ,e.last_name 성
        ,j.job_title 성과업무
-       ,ref.평균급여 "부서 평균급여"
+       ,round(a.평균급여) 부서평균급여
        ,e.salary 급여
-FROM employees e, jobs j, (SELECT department_id
-                                  ,평균급여
-                           FROM (SELECT ROWNUM
-                                        ,department_id
-                                        ,평균급여
-                                 FROM (SELECT department_id 
-                                              ,ROUND(AVG(salary), 0) 평균급여
-                                       FROM employees
-                                       GROUP BY department_id
-                                       ORDER BY 평균급여 DESC
-                                       ) 
-                                 WHERE ROWNUM = 1)
-                            ) ref
+FROM employees e, jobs j, (SELECT department_id, AVG(salary) 평균급여 FROM employees GROUP BY department_id) a
 WHERE e.job_id = j.job_id
-AND e.department_id = ref.department_id
+AND e.department_id = a.department_id
+AND a.평균급여 = (SELECT MAX(AVG(salary)) FROM employees GROUP BY department_id)
 ORDER BY e.employee_id ASC;
 
 
 -- 문제8
 -- 평균 급여가 가장 높은 부서는?
+SELECT department_name
+FROM departments
+WHERE department_id = (SELECT department_id
+                        FROM employees
+                        GROUP BY department_id
+                        HAVING AVG(salary) = (SELECT MAX(AVG(salary)) FROM employees GROUP BY department_id));                        
+
+
 SELECT d.department_name 부서명
-FROM departments d, (SELECT ROWNUM
-                            ,department_id
-                            ,평균급여
-                     FROM (SELECT department_id 
-                                  ,ROUND(AVG(salary), 0) 평균급여
+FROM departments d, (SELECT ROWNUM, department_id, 평균급여
+                     FROM (SELECT department_id, ROUND(AVG(salary), 0) 평균급여
                            FROM employees
                            GROUP BY department_id
                            ORDER BY 평균급여 DESC) 
-                     WHERE ROWNUM = 1) ref
-WHERE d.department_id = ref.department_id;
+                     WHERE ROWNUM = 1) avg
+WHERE d.department_id = avg.department_id;
 
 
 -- 문제9
 --평균 급여가 가장 높은 지역은?
-SELECT 지역명
-FROM (SELECT r.region_name 지역명
-             ,AVG(e.salary) avg
-      FROM employees e, departments d, locations l, countries c, regions r
-      WHERE e.department_id = d.department_id
-      AND d.location_id = l.location_id
-      AND l.country_id = c.country_id
-      AND c.region_id = r.region_id
-      GROUP BY r.region_name
-      )
-WHERE avg = (SELECT MAX(avg)
-             FROM (SELECT r.region_name 지역명
-                          ,AVG(e.salary) avg
-                   FROM employees e, departments d, locations l, countries c, regions r
-                   WHERE e.department_id = d.department_id
-                   AND d.location_id = l.location_id
-                   AND l.country_id = c.country_id
-                   AND c.region_id = r.region_id
-                   GROUP BY r.region_name
-                   )
-             );
+SELECT r.region_name
+FROM employees e, departments d, locations l, countries c, regions r
+WHERE e.department_id = d.department_id
+AND d.location_id = l.location_id
+AND l.country_id = c.country_id
+AND c.region_id = r.region_id
+GROUP BY r.region_name
+HAVING AVG(e.salary) = (SELECT MAX(AVG(e.salary))
+                        FROM employees e, departments d, locations l, countries c, regions r
+                        WHERE e.department_id = d.department_id
+                        AND d.location_id = l.location_id
+                        AND l.country_id = c.country_id
+                        AND c.region_id = r.region_id
+                        GROUP BY r.region_id);
 
 
 -- 문제10
 -- 평균 급여가 제일 높은 업무는?
 SELECT 업무명
-FROM (SELECT ROUND(AVG(e.salary), 0) 평균급여, j.job_title 업무명
+FROM (SELECT AVG(e.salary)평균급여, j.job_title 업무명
       FROM employees e, jobs j
       WHERE e.job_id = j.job_id
       GROUP BY j.job_title)
-WHERE 평균급여 = (SELECT MAX(ROUND(AVG(e.salary), 0))
+WHERE 평균급여 = (SELECT MAX(AVG(e.salary))
                 FROM employees e, jobs j
                 WHERE e.job_id = j.job_id
                 GROUP BY j.job_title);
