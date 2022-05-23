@@ -25,8 +25,7 @@ SELECT employee_id 직원번호
        ,REPLACE(phone_number, '.', '-') 전화번호
        ,department_id 부서번호
 FROM employees
-WHERE (department_id, salary) IN (SELECT department_id
-                                      ,MAX(salary)
+WHERE (department_id, salary) IN (SELECT department_id, MAX(salary)
                                   FROM employees
                                   GROUP BY department_id)
 ORDER BY salary DESC;
@@ -45,10 +44,7 @@ SELECT m.employee_id "매니저 아이디"
        ,e.avg "매니저별 평균 급여"
        ,e.min "매니저별 최소급여"
        ,e.max "매니저별 최대급여"
-FROM employees m, (SELECT manager_id
-                          ,ROUND(AVG(salary), 0) avg 
-                          ,MIN(salary) min
-                          ,MAX(salary) max
+FROM employees m, (SELECT manager_id, ROUND(AVG(salary), 0) avg, MIN(salary) min, MAX(salary) max
                    FROM employees
                    WHERE hire_date >= '2005/01/01'
                    GROUP BY manager_id) e
@@ -73,17 +69,8 @@ ORDER BY e.employee_id ASC;
 -- 문제5
 -- 2005년 이후 입사한 직원중에 입사일이 11번째에서 20번째의 직원의
 -- 사번, 이름, 부서명, 급여, 입사일을 입사일 순서로 출력하세요
-SELECT e.사번
-       ,e.이름
-       ,d.department_name 부서명
-       ,e.급여
-       ,e.입사일
-FROM departments d, (SELECT ROWNUM rn
-                            ,db.사번
-                            ,db.이름
-                            ,db.급여
-                            ,db.입사일
-                            ,db.부서번호
+SELECT e.사번, e.이름, d.department_name 부서명, e.급여, e.입사일
+FROM departments d, (SELECT ROWNUM rn, db.사번, db.이름, db.급여, db.입사일, db.부서번호
                      FROM (SELECT employee_id 사번
                                   ,first_name 이름
                                   ,salary 급여
@@ -105,8 +92,7 @@ SELECT e.first_name || ' ' || last_name 이름
        ,d.department_name 부서명
        ,e.hire_date 입사일
 FROM employees e, departments d
-WHERE hire_date = (SELECT MAX(hire_date)
-                   FROM employees)
+WHERE hire_date = (SELECT MAX(hire_date) FROM employees)
 AND e.department_id = d.department_id;
 
 
