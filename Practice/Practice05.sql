@@ -148,9 +148,37 @@ HAVING AVG(e.salary) = (SELECT MAX(AVG(e.salary))
                         AND c.region_id = r.region_id
                         GROUP BY r.region_id);
 
+SELECT region_name
+FROM regions
+WHERE region_id IN (SELECT r.region_id
+                    FROM employees e, departments d, locations l, countries c, regions r
+                    WHERE e.department_id = d.department_id
+                    AND d.location_id = l.location_id
+                    AND l.country_id = c.country_id
+                    AND c.region_id = r.region_id
+                    GROUP BY r.region_id
+                    HAVING AVG(e.salary) IN (SELECT MAX(AVG(e.salary))
+                                             FROM employees e, departments d, locations l, countries c, regions r
+                                             WHERE e.department_id = d.department_id
+                                             AND d.location_id = l.location_id
+                                             AND l.country_id = c.country_id
+                                             AND c.region_id = r.region_id
+                                             GROUP BY r.region_id));
+                                             
+
 
 -- 문제10
 -- 평균 급여가 제일 높은 업무는?
+SELECT job_title 업무명
+FROM jobs
+WHERE job_id IN (SELECT j.job_id
+                 FROM jobs j, employees e
+                 WHERE j.job_id = e.job_id
+                 GROUP BY j.job_id
+                 HAVING AVG(e.salary) IN (SELECT MAX(AVG(salary))
+                                          FROM employees
+                                          GROUP BY job_id));
+                
 SELECT 업무명
 FROM (SELECT AVG(e.salary)평균급여, j.job_title 업무명
       FROM employees e, jobs j
